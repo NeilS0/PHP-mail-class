@@ -205,7 +205,7 @@ class Mail{
 
 $mail = new Mail();
 
-$mail->Subject("");
+$mail->Subject("hi there");
 
 //AddAddress(FROM, array("display_name", "email"));
 $mail->AddAddress(FROM, array("display_name", "display_name"));
