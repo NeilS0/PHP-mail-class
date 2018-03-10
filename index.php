@@ -141,21 +141,21 @@ class Mail{
 
 		//header
 		$Headers = "MIME-Version: 1.0" .$eol;
-      $Headers .= "Content-Type: multipart/mixed; boundary=\"{$mime_boundary}\"" .$eol;
+		$Headers .= "Content-Type: multipart/mixed; boundary=\"{$mime_boundary}\"" .$eol;
 
-      //body
-      $Body = "--{$mime_boundary}".$eol;
-      $Body .= "Content-Type:text/html; charset=\"iso-8859-1\"".$eol;
-      $Body .= "Content-Transfer-Encoding: 7bit".$eol.$eol;
-      $Body .= $this->Body .= "".$eol;
+		//body
+		$Body = "--{$mime_boundary}".$eol;
+		$Body .= "Content-Type:text/html; charset=\"iso-8859-1\"".$eol;
+		$Body .= "Content-Transfer-Encoding: 7bit".$eol.$eol;
+		$Body .= $this->Body .= "".$eol;
 
-      //attachment
-      $Body .= "--{$mime_boundary}".$eol;
+		//attachment
+		$Body .= "--{$mime_boundary}".$eol;
 		$Body .= "Content-Type: application/octet-stream; name=\"{$this->Attachment[0]}\"".$eol;
-      $Body .= "Content-Transfer-Encoding: base64".$eol;
-      $Body .= "Content-Disposition: attachment; filename={$this->Attachment[0]}".$eol.$eol;
-      $Body .= chunk_split(base64_encode(file_get_contents($this->Attachment[0])));
-      $Body .= $eol;
+		$Body .= "Content-Transfer-Encoding: base64".$eol;
+		$Body .= "Content-Disposition: attachment; filename={$this->Attachment[0]}".$eol.$eol;
+		$Body .= chunk_split(base64_encode(file_get_contents($this->Attachment[0])));
+		$Body .= $eol;
 
 
 
