@@ -24,8 +24,10 @@ class Mail{
 	public function __construct()
 	{
 			$this->TO = array();
-			$this->FROM = array();
-			$this->REPLY = array();
+			// $this->FROM = array();
+			// $this->REPLY = array();
+			$this->FROM = "";
+			$this->REPLY = "";
 			$this->CC = array();
 			$this->BCC = array();
 			$this->Body = "";
@@ -87,7 +89,8 @@ class Mail{
 			}
 
 			if (!$bAlreadyAdded){
-				array_push($Header, $arrAddress);
+				//array_push($Header, $arrAddress);
+				$Header[$arrAddress[0]] = $arrAddress[1];
 			}
 
 		}
@@ -102,17 +105,23 @@ class Mail{
 
 	public function AddAttachment($arrAttachment)
 	{
+		// 		echo "<pre>";
+		// print_r($arrAttachment);
+		// echo "</pre>";
+
+
 		//CHECK IF THE FILE HAS ALREADY BEEN ADDED, IF SO, THEN DONT ADD IT AGAIN !
 		$bAlreadyAdded = 0;
 		foreach ($this->Attachment as $Index => $Attachment){
-			if ($Attachment == $arrAttachment){
+			if ($Attachment == $arrAttachment[1]){
 				$bAlreadyAdded = 1;
 				break;	//NO NEED TO CONTINUE
 			}
 		}
 
 		if (!$bAlreadyAdded){
-			array_push($this->Attachment, $arrAttachment);
+			//array_push($this->Attachment, $arrAttachment);
+			$this->Attachment[$arrAttachment[0]] = $arrAttachment[1];
 		}
 	}
 
@@ -149,16 +158,27 @@ class Mail{
       $Body .= "Content-Transfer-Encoding: 7bit".$eol.$eol;
       $Body .= $this->Body .= "".$eol;
 
-      //attachment
+      //attachments
+      foreach ($this->Attachment as $Index => $Attachment){
+      	//get the file extention
+			$ext = pathinfo($Attachment, PATHINFO_EXTENSION);
 
-		foreach ($this->Attachment as $Index => $Attachment){
-			$Body .= "--{$mime_boundary}".$eol;
-			$Body .= "Content-Type: application/octet-stream; name=\"{$this->Attachment[0]}\"".$eol;
-		   $Body .= "Content-Transfer-Encoding: base64".$eol;
-		   $Body .= "Content-Disposition: attachment; filename={$Attachment}".$eol.$eol;
-		   $Body .= chunk_split(base64_encode(file_get_contents($Attachment)));
-		   $Body .= $eol;
-		}
+			//add attachment to body
+      	$Body .= "--{$mime_boundary}".$eol;
+			$Body .= "Content-Type: application/octet-stream; name=\"".$Attachment."\"".$eol;
+	      $Body .= "Content-Transfer-Encoding: base64".$eol;
+	      $Body .= "Content-Disposition: attachment; filename=$Index.$ext".$eol.$eol;
+	      $Body .= chunk_split(base64_encode(file_get_contents($Attachment)));
+	      $Body .= $eol;
+      }
+      /*
+      $Body .= "--{$mime_boundary}".$eol;
+		$Body .= "Content-Type: application/octet-stream; name=\"{$this->Attachment[0]}\"".$eol;
+      $Body .= "Content-Transfer-Encoding: base64".$eol;
+      $Body .= "Content-Disposition: attachment; filename={$this->Attachment[0]}".$eol.$eol;
+      $Body .= chunk_split(base64_encode(file_get_contents($this->Attachment[0])));
+      $Body .= $eol;
+      */
 
 
 
@@ -169,7 +189,8 @@ class Mail{
 		//add cc's
 		$Cc = "";
 		foreach ($this->CC as $Index => $arrAddress){
-			$Cc = $arrAddress[0]."<".$arrAddress[1].">,";
+			//$Cc = $arrAddress[$Index]."<".$arrAddress[1].">,";
+			$Cc = "$Index<$arrAddress>,";
 		}
 		$Headers .= "Cc: ". $Cc. $eol;
 	   
@@ -186,7 +207,8 @@ class Mail{
 		//to
 		$To = "";
 		foreach ($this->TO as $Index => $arrAddress){
-			$To .= $arrAddress[0]."<".$arrAddress[1].">,";
+			//$To .= $arrAddress[$Index]."<".$arrAddress[1].">,";
+			$To .= "$Index<$arrAddress>,";
 		}
 
 
@@ -213,12 +235,11 @@ $mail->AddAddress(TO, array("display_name", "display_name"));
 $mail->AddAddress(TO, array("display_name", "display_name"));
 $mail->AddAddress(TO, array("display_name", "display_name"));
 $mail->AddAddress(CC, array("display_name", "display_name"));
+$mail->AddAddress(FROM, array("Neil", "neil@localhost"));	//From : Neil<neil@localhost>;
 
 //add attachment
-//$mail->AddAttachment("dir/file_name1");
-//$mail->AddAttachment("dir/file_name2");
-//$mail->AddAttachment("dir/file_name3");
-//...
+$mail->AddAttachment(array("file_new_name", "file_to_attach"));
+$mail->AddAttachment(array("cat", "cat3file.jpg"));	//will remain to cat.jpg in email
 
 //html
 $mail->Body("<h1>Hi</h1><br><body><p>hello there</p></body>");
