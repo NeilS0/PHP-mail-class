@@ -137,28 +137,25 @@ class Mail{
 		$separator = md5(time());
 		//carriage return type (RFC)
 		$eol = "\r\n";
+		$mime_boundary = "==Multipart_Boundary_x{$separator}x";
 
-		//main header (multipart mandatory)
-		$Headers = "MIME-Version: 1.0" . $eol;
-		$Headers .= "Content-Type: multipart/mixed; boundary=\"" . $separator . "\"" . $eol;
-		$Headers .= "Content-Transfer-Encoding: 7bit" . $eol;
-		$headers .= $this->Bod . $eol;
+		//header
+		$Headers = "MIME-Version: 1.0" .$eol;
+      $Headers .= "Content-Type: multipart/mixed; boundary=\"{$mime_boundary}\"" .$eol;
 
-		//Body
-		//message
-		$Body = "--" . $separator . $eol;
-		$Body .= "Content-Type: text/plain; charset=\"iso-8859-1\"" . $eol;
-		$Body .= "Content-Transfer-Encoding: 8bit" . $eol;
-		$Body .= $this->Body . $eol;
+      //body
+      $Body = "--{$mime_boundary}".$eol;
+      $Body .= "Content-Type:text/html; charset=\"iso-8859-1\"".$eol;
+      $Body .= "Content-Transfer-Encoding: 7bit".$eol.$eol;
+      $Body .= $this->Body .= "".$eol;
 
-		//attachment
-		//$content = chunk_split(base64_encode(file_get_contents($this->Attachment[0])));
-		$Body .= "--" . $separator . $eol;
-		$Body .= "Content-Type: application/octet-stream; name=\"" . $this->Attachment[0] . "\"" . $eol;
-		$Body .= "Content-Transfer-Encoding: base64" . $eol;
-		$Body .= "Content-Disposition: attachment" . $eol;
-		$Body .= chunk_split(base64_encode(file_get_contents($this->Attachment[0]))) . $eol;
-		$Body .= "--" . $separator . "--";
+      //attachment
+      $Body .= "--{$mime_boundary}".$eol;
+		$Body .= "Content-Type: application/octet-stream; name=\"{$this->Attachment[0]}\"".$eol;
+      $Body .= "Content-Transfer-Encoding: base64".$eol;
+      $Body .= "Content-Disposition: attachment; filename={$this->Attachment[0]}".$eol.$eol;
+      $Body .= chunk_split(base64_encode(file_get_contents($this->Attachment[0])));
+      $Body .= $eol;
 
 
 
@@ -221,8 +218,13 @@ $mail->AddAddress(CC, array("display_name", "display_name"));
 //html
 $mail->Body("<h1>Hi</h1><br><body><p>hello there</p></body>");
 
+
+//$mail->Body($Body);
+
+//TODO: preview how the mail will look
 $mail->Preview(1);
 
+//send the mail
 $mail->Send();
 
 ?>
