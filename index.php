@@ -102,7 +102,7 @@ class Mail{
 
 	public function AddAttachment($arrAttachment)
 	{
-		//CHECK IF THE EMAIL HAS ALREADY BEEN ADDED, IF SO, THEN DONT ADD IT AGAIN !
+		//CHECK IF THE FILE HAS ALREADY BEEN ADDED, IF SO, THEN DONT ADD IT AGAIN !
 		$bAlreadyAdded = 0;
 		foreach ($this->Attachment as $Index => $Attachment){
 			if ($Attachment == $arrAttachment){
@@ -141,21 +141,24 @@ class Mail{
 
 		//header
 		$Headers = "MIME-Version: 1.0" .$eol;
-		$Headers .= "Content-Type: multipart/mixed; boundary=\"{$mime_boundary}\"" .$eol;
+      $Headers .= "Content-Type: multipart/mixed; boundary=\"{$mime_boundary}\"" .$eol;
 
-		//body
-		$Body = "--{$mime_boundary}".$eol;
-		$Body .= "Content-Type:text/html; charset=\"iso-8859-1\"".$eol;
-		$Body .= "Content-Transfer-Encoding: 7bit".$eol.$eol;
-		$Body .= $this->Body .= "".$eol;
+      //body
+      $Body = "--{$mime_boundary}".$eol;
+      $Body .= "Content-Type:text/html; charset=\"iso-8859-1\"".$eol;
+      $Body .= "Content-Transfer-Encoding: 7bit".$eol.$eol;
+      $Body .= $this->Body .= "".$eol;
 
-		//attachment
-		$Body .= "--{$mime_boundary}".$eol;
-		$Body .= "Content-Type: application/octet-stream; name=\"{$this->Attachment[0]}\"".$eol;
-		$Body .= "Content-Transfer-Encoding: base64".$eol;
-		$Body .= "Content-Disposition: attachment; filename={$this->Attachment[0]}".$eol.$eol;
-		$Body .= chunk_split(base64_encode(file_get_contents($this->Attachment[0])));
-		$Body .= $eol;
+      //attachment
+
+		foreach ($this->Attachment as $Index => $Attachment){
+			$Body .= "--{$mime_boundary}".$eol;
+			$Body .= "Content-Type: application/octet-stream; name=\"{$this->Attachment[0]}\"".$eol;
+		   $Body .= "Content-Transfer-Encoding: base64".$eol;
+		   $Body .= "Content-Disposition: attachment; filename={$Attachment}".$eol.$eol;
+		   $Body .= chunk_split(base64_encode(file_get_contents($Attachment)));
+		   $Body .= $eol;
+		}
 
 
 
@@ -212,8 +215,10 @@ $mail->AddAddress(TO, array("display_name", "display_name"));
 $mail->AddAddress(CC, array("display_name", "display_name"));
 
 //add attachment
-//$mail->AddAttachment("dir/file_name");
-//$mail->AddAttachment("dir/file_name");
+//$mail->AddAttachment("dir/file_name1");
+//$mail->AddAttachment("dir/file_name2");
+//$mail->AddAttachment("dir/file_name3");
+//...
 
 //html
 $mail->Body("<h1>Hi</h1><br><body><p>hello there</p></body>");
