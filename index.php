@@ -230,11 +230,11 @@ $mail = new Mail();
 $mail->Subject("hi there");
 
 //AddAddress(FROM, array("display_name", "email"));
-$mail->AddAddress(FROM, array("display_name", "display_name"));
-$mail->AddAddress(TO, array("display_name", "display_name"));
-$mail->AddAddress(TO, array("display_name", "display_name"));
-$mail->AddAddress(TO, array("display_name", "display_name"));
-$mail->AddAddress(CC, array("display_name", "display_name"));
+$mail->AddAddress(FROM, array("display_name", "email"));
+$mail->AddAddress(TO, array("display_name", "email"));
+$mail->AddAddress(TO, array("display_name", "email"));
+$mail->AddAddress(TO, array("display_name", "email"));
+$mail->AddAddress(CC, array("display_name", "email"));
 $mail->AddAddress(FROM, array("Neil", "neil@localhost"));	//From : Neil<neil@localhost>;
 
 //add attachment
