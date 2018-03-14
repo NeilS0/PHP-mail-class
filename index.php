@@ -190,7 +190,7 @@ class Mail{
 		$Cc = "";
 		foreach ($this->CC as $Index => $arrAddress){
 			//$Cc = $arrAddress[$Index]."<".$arrAddress[1].">,";
-			$Cc = "$Index<$arrAddress>,";
+			$Cc .= "$Index<$arrAddress>,";
 		}
 		$Headers .= "Cc: ". $Cc. $eol;
 
